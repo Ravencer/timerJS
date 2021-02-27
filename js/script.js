@@ -39,6 +39,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		updateClock();
 	}
+	countTimer('28 february 2021', this);
 	setInterval(countTimer, 1000, '28 february 2021', this);
 
 	//Меню
