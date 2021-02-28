@@ -54,11 +54,15 @@ window.addEventListener('DOMContentLoaded', () => {
 			target = target.closest('.menu');
 			if (target) {
 				handlerMenu();
-			} else if ((!target) && menu.classList.contains('active-menu')) {
+				console.log(1);
+			} else if ((!target) &&
+			menu.classList.contains('active-menu') &&
+			!event.target.matches('menu') &&
+			event.target.tagName !== 'LI') {
 				handlerMenu();
+				console.log(2);
 				let target = event.target;
-				console.log(target.tagName);
-				if (target.tagName === 'A') {
+				if (target.tagName === 'A' && !target.classList.contains('close-btn')) {
 					console.log(target);
 					event.preventDefault();
 					let anchor = document.querySelector(target.getAttribute('href'));
