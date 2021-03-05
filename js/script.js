@@ -336,4 +336,60 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	};
 	validateComm();
+
+	//Калькулятор
+	const calculator = (price = 100) => {
+		const calcBlock = document.querySelector('.calc-block'),
+			calcType = document.querySelector('.calc-type'),
+			calcSquare = document.querySelector('.calc-square'),
+			calcDay = document.querySelector('.calc-day'),
+			calcCount = document.querySelector('.calc-count'),
+			totalValue = document.getElementById('total');
+
+
+		const countSum = () => {
+			let total = 0,
+				countValue = 1,
+				dayValue = 1;
+			const typeValue = calcType.options[calcType.selectedIndex].value,
+				squareValue = +calcSquare.value;
+			if (calcCount.value > 1) {
+				countValue += (calcCount.value - 1) / 10;
+			}
+			if (calcDay.value && calcDay.value < 5) {
+				dayValue *= 2;
+			} else if (calcDay.value && calcDay.value < 10) {
+				dayValue *= 1.5;
+			}
+			if (typeValue && squareValue) {
+				total = price * typeValue * squareValue * countValue * dayValue;
+			}
+			function animateValue(elem, startNum, endNum, duration) {
+				if (startNum === endNum) { return; }
+				let range = endNum - startNum;
+				let current = startNum;
+				let increment = endNum > startNum ? 50 : -50;
+				let stepTime = Math.abs(Math.floor(duration / range));
+				let timer = setInterval(() => {
+					current += increment;
+					elem.textContent = current;
+					if (current === endNum) {
+						clearInterval(timer);
+					}
+				}, stepTime);
+			}
+			animateValue(totalValue, +totalValue.textContent, total, 10);
+		};
+
+
+		calcBlock.addEventListener('change', event => {
+			let target = event.target;
+
+			if (target.matches(`.calc-type`) || target.matches('.calc-square') ||
+			target.matches('.calc-day') || target.matches('.calc-count')) {
+				countSum();
+			}
+		});
+	};
+	calculator(100);
 });
