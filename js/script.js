@@ -39,8 +39,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		updateClock();
 	}
-	countTimer('2 march 2021', this);
-	setInterval(countTimer, 1000, '2 march 2021', this);
+	countTimer('8 march 2021', this);
+	setInterval(countTimer, 1000, '8 march 2021', this);
 
 	//Меню
 	const toggleMenu = () => {
@@ -253,4 +253,87 @@ window.addEventListener('DOMContentLoaded', () => {
 		startSlide(1500);
 	};
 	slider();
+
+
+	let commandBlock = document.getElementById('command');
+	commandBlock.addEventListener('mouseover', e => {
+		if (e.target.classList.contains('command__photo')) {
+			let target = e.target;
+			let targetSrc = target.src;
+			target.src = target.dataset.img;
+			target.addEventListener('mouseout', () => {
+				target.src = targetSrc;
+			}
+			);
+		}
+	});
+
+	//Валидация
+	const validateComm = () => {
+		let calcItems = document.querySelectorAll('.calc-item');
+		let formName = document.getElementsByName('user_name');
+		let emailForm = document.getElementsByName('user_email');
+		let phoneForm = document.getElementsByName('user_phone');
+		let messageForm = document.querySelector('.mess');
+		const blurValidate = elem => {
+			elem.value = elem.value.replace(/(^ )|(^-)|(-$)|( $)/i, '');
+			elem.value = elem.value.replace(/(-+)/i, '-');
+			elem.value = elem.value.trim();
+		};
+		messageForm.addEventListener('input', () => {
+			messageForm.value = messageForm.value.replace(/[^а-я' '-]/i, '');
+			messageForm.addEventListener('blur', () => {
+				messageForm.value = messageForm.value.replace(/[^а-я' '-]/i, '');
+				blurValidate(messageForm);
+			});
+		});
+		calcItems.forEach(elem => {
+			if (elem.tagName !== 'SELECT') {
+				elem.addEventListener('input', () => {
+					elem.value = elem.value.replace(/\D/, '');
+					elem.addEventListener('blur', () => {
+						elem.value = elem.value.replace(/\D/, '');
+						blurValidate(elem);
+					});
+				});
+			}
+		});
+		formName.forEach(elem => {
+			elem.addEventListener('input', () => {
+				elem.value = elem.value.replace(/[^а-я' '-]/i, '');
+				elem.addEventListener('blur', () => {
+					elem.value = elem.value.replace(/[^а-я' '-]/i, '');
+					blurValidate(elem);
+					let splits = elem.value.split(' ');
+					let outcome = '';
+					for (let i = 0; i < splits.length; i++) {
+						let Name = splits[i];
+						let First = Name.substring(0, 1).toUpperCase();
+						let Leftovers = Name.substring(1, Name.length).toLowerCase();
+						outcome += First + Leftovers + " ";
+					}
+					elem.value = outcome.trim();
+				});
+			});
+		});
+		emailForm.forEach(elem => {
+			elem.addEventListener('input', () => {
+				elem.value = elem.value.replace(/[^a-z@\-_.!~*']/i, '');
+				elem.addEventListener('blur', () => {
+					elem.value = elem.value.replace(/[^a-z@\-_.!~*']/i, '');
+					blurValidate(elem);
+				});
+			});
+		});
+		phoneForm.forEach(elem => {
+			elem.addEventListener('input', () => {
+				elem.value = elem.value.replace(/[^0-9()-]/i, '');
+				elem.addEventListener('blur', () => {
+					elem.value = elem.value.replace(/[^0-9()-]/i, '');
+					blurValidate(elem);
+				});
+			});
+		});
+	};
+	validateComm();
 });
