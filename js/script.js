@@ -39,8 +39,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		updateClock();
 	}
-	countTimer('8 march 2021', this);
-	setInterval(countTimer, 1000, '8 march 2021', this);
+	countTimer('9 march 2021', this);
+	setInterval(countTimer, 1000, '9 march 2021', this);
 
 	//Меню
 	const toggleMenu = () => {
@@ -281,9 +281,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			elem.value = elem.value.trim();
 		};
 		messageForm.addEventListener('input', () => {
-			messageForm.value = messageForm.value.replace(/[^а-я' '\-,.;...:?!()]/i, '');
+			messageForm.value = messageForm.value.replace(/[^а-я' '\-,.;...:?!()0-9]/i, '');
 			messageForm.addEventListener('blur', () => {
-				messageForm.value = messageForm.value.replace(/[^а-я' '\-,.;...:?!()]/i, '');
+				messageForm.value = messageForm.value.replace(/[^а-я' '\-,.;...:?!()0-9]/i, '');
 				blurValidate(messageForm);
 			});
 		});
@@ -300,9 +300,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 		formName.forEach(elem => {
 			elem.addEventListener('input', () => {
-				elem.value = elem.value.replace(/[^а-я' '-]/i, '');
+				elem.value = elem.value.replace(/[^а-я' ']/i, '');
 				elem.addEventListener('blur', () => {
-					elem.value = elem.value.replace(/[^а-я' '-]/i, '');
+					elem.value = elem.value.replace(/[^а-я' ']/i, '');
 					blurValidate(elem);
 					let splits = elem.value.split(' ');
 					let outcome = '';
@@ -327,9 +327,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 		phoneForm.forEach(elem => {
 			elem.addEventListener('input', () => {
-				elem.value = elem.value.replace(/[^0-9()-]/i, '');
+				elem.value = elem.value.replace(/[^0-9+]/i, '');
 				elem.addEventListener('blur', () => {
-					elem.value = elem.value.replace(/[^0-9()-]/i, '');
+					elem.value = elem.value.replace(/[^0-9+]/i, '');
 					blurValidate(elem);
 				});
 			});
@@ -394,4 +394,67 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	};
 	calculator(100);
+
+	//send-ajax-form
+
+	const sendForm = () => {
+		const errorMessage = 'Что-то пошло не так...',
+			loadMessage = 'Загрузка...',
+			successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+		const forms = document.querySelectorAll('form');
+		const statusMessage = document.createElement('div');
+		statusMessage.style.cssText = 'font-size: 2rem;';
+
+		const postData = (body, outputData, errorData) => {
+			const request = new XMLHttpRequest();
+			request.addEventListener('readystatechange', () => {
+				if (request.readyState !== 4) {
+					return;
+				}
+				if (request.status === 200) {
+					outputData();
+				} else {
+					errorData(request.status);
+				}
+			});
+			request.open('POST', './server.php');
+			request.setRequestHeader('Content-Type', 'application/json');
+
+			request.send(JSON.stringify(body));
+		};
+
+		forms.forEach(elem => {
+			elem.addEventListener('submit', event => {
+				event.preventDefault();
+				if (elem.id === 'form3') {
+					statusMessage.style.color = 'white';
+				}
+				statusMessage.textContent = loadMessage;
+				elem.appendChild(statusMessage);
+
+				const elemData = new FormData(elem);
+				let body = {};
+
+				elemData.forEach((val, key) => {
+					body[key] = val;
+				});
+				postData(body,
+					() => {
+						statusMessage.textContent = successMessage;
+						elem.reset();
+					},
+					error => {
+						statusMessage.textContent = errorMessage;
+						console.error(error);
+						elem.reset();
+					});
+
+			});
+		});
+
+
+
+
+	};
+	sendForm();
 });
