@@ -281,9 +281,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			elem.value = elem.value.trim();
 		};
 		messageForm.addEventListener('input', () => {
-			messageForm.value = messageForm.value.replace(/[^а-я' '-]/i, '');
+			messageForm.value = messageForm.value.replace(/[^а-я' '\-,.;...:?!()]/i, '');
 			messageForm.addEventListener('blur', () => {
-				messageForm.value = messageForm.value.replace(/[^а-я' '-]/i, '');
+				messageForm.value = messageForm.value.replace(/[^а-я' '\-,.;...:?!()]/i, '');
 				blurValidate(messageForm);
 			});
 		});
