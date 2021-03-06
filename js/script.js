@@ -364,26 +364,22 @@ window.addEventListener('DOMContentLoaded', () => {
 			if (typeValue && squareValue) {
 				total = price * typeValue * squareValue * countValue * dayValue;
 			}
-			function animateValue(elem, startNum, endNum, duration) {
-				elem.textContent = 0;
-				if (startNum === endNum) { return; }
-				let range = endNum - startNum;
-				let current = startNum;
-				let increment = endNum > startNum ? 1000 : -1000;
-				let stepTime = Math.abs(Math.floor(duration / range));
-				let timerId = setInterval(() => {
-					current += increment;
-					elem.textContent = current;
-					if (current === endNum) {
-						clearInterval(timerId);
+			function animateValue(obj, start, end, duration) {
+				let startTimestamp = null;
+				const step = timestamp => {
+					if (!startTimestamp) startTimestamp = timestamp;
+					const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+					obj.innerHTML = Math.floor(progress * (end - start) + start);
+					if (progress < 1) {
+						window.requestAnimationFrame(step);
 					}
-				}, stepTime);
+				};
+				window.requestAnimationFrame(step);
 			}
 			if (calcType.value && calcSquare.value) {
-				animateValue(totalValue, 0, +total, 1);
+				animateValue(totalValue, 0, +total, 250);
 			} else {
 				totalValue.textContent = 0;
-				animateValue(totalValue, 0, 0, 1);
 			}
 		};
 
