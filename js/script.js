@@ -365,20 +365,26 @@ window.addEventListener('DOMContentLoaded', () => {
 				total = price * typeValue * squareValue * countValue * dayValue;
 			}
 			function animateValue(elem, startNum, endNum, duration) {
+				elem.textContent = 0;
 				if (startNum === endNum) { return; }
 				let range = endNum - startNum;
 				let current = startNum;
-				let increment = endNum > startNum ? 50 : -50;
+				let increment = endNum > startNum ? 1000 : -1000;
 				let stepTime = Math.abs(Math.floor(duration / range));
-				let timer = setInterval(() => {
+				let timerId = setInterval(() => {
 					current += increment;
 					elem.textContent = current;
 					if (current === endNum) {
-						clearInterval(timer);
+						clearInterval(timerId);
 					}
 				}, stepTime);
 			}
-			animateValue(totalValue, +totalValue.textContent, total, 10);
+			if (calcType.value && calcSquare.value) {
+				animateValue(totalValue, 0, +total, 1);
+			} else {
+				totalValue.textContent = 0;
+				animateValue(totalValue, 0, 0, 1);
+			}
 		};
 
 
