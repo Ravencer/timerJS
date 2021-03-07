@@ -326,6 +326,12 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 		phoneForm.forEach(elem => {
+			let maxAttribute = document.createAttribute('pattern');
+			let titleAttribute = document.createAttribute('title');
+			titleAttribute.value = 'Мин. число символов - 7, макс. - 11';
+			maxAttribute.value = ".{7,11}";
+			elem.setAttributeNode(maxAttribute);
+			elem.setAttributeNode(titleAttribute);
 			elem.addEventListener('input', () => {
 				elem.value = elem.value.replace(/[^0-9+]/i, '');
 				elem.addEventListener('blur', () => {
@@ -378,6 +384,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 			if (calcType.value && calcSquare.value) {
 				animateValue(totalValue, 0, +total, 250);
+			} else if (calcType.value === '') {
+				calcDay.value = '';
+				calcCount.value = '';
+				totalValue.textContent = 0;
+			} else if (calcType.value !== '' && calcSquare.value === '') {
+				calcDay.value = '';
+				calcCount.value = '';
+				totalValue.textContent = 0;
 			} else {
 				totalValue.textContent = 0;
 			}
@@ -441,12 +455,32 @@ window.addEventListener('DOMContentLoaded', () => {
 				postData(body,
 					() => {
 						statusMessage.textContent = successMessage;
+						setTimeout(() => {
+							statusMessage.remove();
+						}, 4000);
 						elem.reset();
+						if (elem.id === 'form3') {
+							setTimeout(() => {
+								const popup = document.querySelector('.popup');
+								popup.style.display = 'none';
+								popup.style.opacity = '1';
+							}, 4000);
+						}
 					},
 					error => {
 						statusMessage.textContent = errorMessage;
 						console.error(error);
+						setTimeout(() => {
+							statusMessage.remove();
+						}, 4000);
 						elem.reset();
+						if (elem.id === 'form3') {
+							setTimeout(() => {
+								const popup = document.querySelector('.popup');
+								popup.style.display = 'none';
+								popup.style.opacity = '1';
+							}, 4000);
+						}
 					});
 
 			});
