@@ -39,8 +39,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		updateClock();
 	}
-	countTimer('9 march 2021', this);
-	setInterval(countTimer, 1000, '9 march 2021', this);
+	countTimer('12 march 2021', this);
+	setInterval(countTimer, 1000, '12 march 2021', this);
 
 	//Меню
 	const toggleMenu = () => {
@@ -54,13 +54,11 @@ window.addEventListener('DOMContentLoaded', () => {
 			target = target.closest('.menu');
 			if (target) {
 				handlerMenu();
-				console.log(1);
 			} else if ((!target) &&
 			menu.classList.contains('active-menu') &&
 			!event.target.matches('menu') &&
 			event.target.tagName !== 'LI') {
 				handlerMenu();
-				console.log(2);
 				let target = event.target;
 				if (target.tagName === 'A' && !target.classList.contains('close-btn')) {
 					console.log(target);
@@ -351,7 +349,13 @@ window.addEventListener('DOMContentLoaded', () => {
 			calcDay = document.querySelector('.calc-day'),
 			calcCount = document.querySelector('.calc-count'),
 			totalValue = document.getElementById('total');
-
+		calcType.addEventListener('change', () => {
+			if (calcType.value === '') {
+				calcSquare.value = '';
+				calcDay.value = '';
+				calcCount.value = '';
+			}
+		});
 
 		const countSum = () => {
 			let total = 0,
@@ -384,15 +388,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 			if (calcType.value && calcSquare.value) {
 				animateValue(totalValue, 0, +total, 250);
-			} else if (calcType.value === '') {
-				calcDay.value = '';
-				calcCount.value = '';
-				totalValue.textContent = 0;
-			} else if (calcType.value !== '' && calcSquare.value === '') {
-				calcDay.value = '';
-				calcCount.value = '';
-				totalValue.textContent = 0;
-			} else {
+			}  else {
 				totalValue.textContent = 0;
 			}
 		};
@@ -412,30 +408,39 @@ window.addEventListener('DOMContentLoaded', () => {
 	//send-ajax-form
 
 	const sendForm = () => {
-		const errorMessage = 'Что-то пошло не так...',
-			loadMessage = 'Загрузка...',
-			successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+		const loadMessage = 'Загрузка...';
 		const forms = document.querySelectorAll('form');
 		const statusMessage = document.createElement('div');
 		statusMessage.style.cssText = 'font-size: 2rem;';
 
-		const postData = (body, outputData, errorData) => {
+
+		const postData = body => new Promise((resolve, reject) => {
 			const request = new XMLHttpRequest();
 			request.addEventListener('readystatechange', () => {
 				if (request.readyState !== 4) {
 					return;
 				}
 				if (request.status === 200) {
-					outputData();
+					resolve('Спасибо! Мы скоро с вами свяжемся!');
 				} else {
-					errorData(request.status);
+					reject('Что-то пошло не так...');
+					console.error(request.statusText);
 				}
 			});
 			request.open('POST', './server.php');
 			request.setRequestHeader('Content-Type', 'application/json');
 
 			request.send(JSON.stringify(body));
+		});
+
+
+		const messageFunc = message => {
+			statusMessage.textContent = message;
+			setTimeout(() => {
+				statusMessage.remove();
+			}, 4000);
 		};
+
 
 		forms.forEach(elem => {
 			elem.addEventListener('submit', event => {
@@ -452,43 +457,24 @@ window.addEventListener('DOMContentLoaded', () => {
 				elemData.forEach((val, key) => {
 					body[key] = val;
 				});
-				postData(body,
-					() => {
-						statusMessage.textContent = successMessage;
-						setTimeout(() => {
-							statusMessage.remove();
-						}, 4000);
-						elem.reset();
-						if (elem.id === 'form3') {
-							setTimeout(() => {
-								const popup = document.querySelector('.popup');
-								popup.style.display = 'none';
-								popup.style.opacity = '1';
-							}, 4000);
-						}
-					},
-					error => {
-						statusMessage.textContent = errorMessage;
-						console.error(error);
-						setTimeout(() => {
-							statusMessage.remove();
-						}, 4000);
-						elem.reset();
-						if (elem.id === 'form3') {
-							setTimeout(() => {
-								const popup = document.querySelector('.popup');
-								popup.style.display = 'none';
-								popup.style.opacity = '1';
-							}, 4000);
-						}
-					});
 
+
+				/////Ajax с промисом
+				postData(body)
+					.then(messageFunc)
+					.catch(messageFunc);
+
+
+				elem.reset();
+				if (elem.id === 'form3') {
+					setTimeout(() => {
+						const popup = document.querySelector('.popup');
+						popup.style.display = 'none';
+						popup.style.opacity = '1';
+					}, 4000);
+				}
 			});
 		});
-
-
-
-
 	};
 	sendForm();
 });
