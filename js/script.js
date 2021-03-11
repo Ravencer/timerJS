@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-useless-escape */
 /* eslint-disable prefer-const */
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -39,8 +41,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 		updateClock();
 	}
-	countTimer('12 march 2021', this);
-	setInterval(countTimer, 1000, '12 march 2021', this);
+	countTimer('15 march 2021', this);
+	setInterval(countTimer, 1000, '15 march 2021', this);
 
 	//Меню
 	const toggleMenu = () => {
@@ -61,7 +63,6 @@ window.addEventListener('DOMContentLoaded', () => {
 				handlerMenu();
 				let target = event.target;
 				if (target.tagName === 'A' && !target.classList.contains('close-btn')) {
-					console.log(target);
 					event.preventDefault();
 					let anchor = document.querySelector(target.getAttribute('href'));
 					anchor.scrollIntoView({
@@ -297,6 +298,12 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 		formName.forEach(elem => {
+			let maxAttribute = document.createAttribute('pattern');
+			let titleAttribute = document.createAttribute('title');
+			titleAttribute.value = 'Мин. число символов - 3';
+			maxAttribute.value = ".{3,}";
+			elem.setAttributeNode(maxAttribute);
+			elem.setAttributeNode(titleAttribute);
 			elem.addEventListener('input', () => {
 				elem.value = elem.value.replace(/[^а-я' ']/i, '');
 				elem.addEventListener('blur', () => {
@@ -315,6 +322,12 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 		emailForm.forEach(elem => {
+			let emailAttribute = document.createAttribute('pattern');
+			let titleAttribute = document.createAttribute('title');
+			titleAttribute.value = 'Введите корректный формат Email';
+			emailAttribute.value = "^[a-zA-Z@\-_.!~*']+@[a-zA-Z-]+(@-_.!~*'[a-zA-Z]+)*$";
+			elem.setAttributeNode(emailAttribute);
+			elem.setAttributeNode(titleAttribute);
 			elem.addEventListener('input', () => {
 				elem.value = elem.value.replace(/[^a-z@\-_.!~*']/i, '');
 				elem.addEventListener('blur', () => {
@@ -414,23 +427,10 @@ window.addEventListener('DOMContentLoaded', () => {
 		statusMessage.style.cssText = 'font-size: 2rem;';
 
 
-		const postData = body => new Promise((resolve, reject) => {
-			const request = new XMLHttpRequest();
-			request.addEventListener('readystatechange', () => {
-				if (request.readyState !== 4) {
-					return;
-				}
-				if (request.status === 200) {
-					resolve('Спасибо! Мы скоро с вами свяжемся!');
-				} else {
-					reject('Что-то пошло не так...');
-					console.error(request.statusText);
-				}
-			});
-			request.open('POST', './server.php');
-			request.setRequestHeader('Content-Type', 'application/json');
-
-			request.send(JSON.stringify(body));
+		const postData = body => fetch("./server.php", {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body)
 		});
 
 
@@ -459,10 +459,18 @@ window.addEventListener('DOMContentLoaded', () => {
 				});
 
 
-				/////Ajax с промисом
+				/////Ajax с fetch
 				postData(body)
-					.then(messageFunc)
-					.catch(messageFunc);
+					.then(response => {
+						if (response.status !== 200) {
+							throw new Error('status network not 200');
+						}
+						messageFunc('Спасибо! Мы скоро с вами свяжемся');
+					})
+					.catch(error => {
+						messageFunc('Что-то пошло не так...');
+						console.error(error);
+					});
 
 
 				elem.reset();
