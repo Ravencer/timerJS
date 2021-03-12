@@ -300,8 +300,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		formName.forEach(elem => {
 			let maxAttribute = document.createAttribute('pattern');
 			let titleAttribute = document.createAttribute('title');
-			titleAttribute.value = 'Мин. число символов - 3';
-			maxAttribute.value = ".{3,}";
+			titleAttribute.value = 'Мин. число символов - 2';
+			maxAttribute.value = ".{2,}";
 			elem.setAttributeNode(maxAttribute);
 			elem.setAttributeNode(titleAttribute);
 			elem.addEventListener('input', () => {
@@ -325,13 +325,13 @@ window.addEventListener('DOMContentLoaded', () => {
 			let emailAttribute = document.createAttribute('pattern');
 			let titleAttribute = document.createAttribute('title');
 			titleAttribute.value = 'Введите корректный формат Email';
-			emailAttribute.value = "^[a-zA-Z@\-_.!~*']+@[a-zA-Z-]+(@-_.!~*'[a-zA-Z]+)*$";
+			emailAttribute.value = "^[a-zA-Z0-9@\-_.!~*']+@[a-zA-Z0-9-]+(@-_.!~*'[a-zA-Z0-9]+)*$";
 			elem.setAttributeNode(emailAttribute);
 			elem.setAttributeNode(titleAttribute);
 			elem.addEventListener('input', () => {
-				elem.value = elem.value.replace(/[^a-z@\-_.!~*']/i, '');
+				elem.value = elem.value.replace(/[^a-z0-9@\-_.!~*']/i, '');
 				elem.addEventListener('blur', () => {
-					elem.value = elem.value.replace(/[^a-z@\-_.!~*']/i, '');
+					elem.value = elem.value.replace(/[^a-z0-9@\-_.!~*']/i, '');
 					blurValidate(elem);
 				});
 			});
@@ -339,8 +339,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		phoneForm.forEach(elem => {
 			let maxAttribute = document.createAttribute('pattern');
 			let titleAttribute = document.createAttribute('title');
-			titleAttribute.value = 'Мин. число символов - 7, макс. - 11';
-			maxAttribute.value = ".{7,11}";
+			titleAttribute.value = 'Мин. число символов - 7, макс. - 13';
+			maxAttribute.value = ".{7,13}";
 			elem.setAttributeNode(maxAttribute);
 			elem.setAttributeNode(titleAttribute);
 			elem.addEventListener('input', () => {
