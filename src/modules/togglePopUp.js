@@ -4,7 +4,9 @@ const togglePopUp = () => {
 	popupBtn.forEach(elem => elem.addEventListener('click', () => {
 		let count = 0;
 		popup.style.display = 'block';
-		if (window.screen.width > 768) {
+		const width  = window.innerWidth || document.documentElement.clientWidth ||
+		document.body.clientWidth;
+		if (width > 768) {
 			popup.style.opacity = '0';
 			const intervalId = setInterval(() => {
 				if (count < 1) {
@@ -15,20 +17,22 @@ const togglePopUp = () => {
 					return;
 				}
 			}, 30);
+		} else {
+			popup.style.opacity = '1';
 		}
 	}));
 	popup.addEventListener('click', event => {
 		let target = event.target;
 		if (target.classList.contains('popup-close')) {
 			popup.style.display = 'none';
-			if (window.screen > 768) {
+			if (window.screen.width > 768) {
 				popup.style.opacity = '0';
 			}
 		} else {
 			target = target.closest('.popup-content');
 			if (!target) {
 				popup.style.display = 'none';
-				if (window.screen > 768) {
+				if (window.screen.width > 768) {
 					popup.style.opacity = '0';
 				}
 			}

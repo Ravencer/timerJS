@@ -1,6 +1,13 @@
 const toggleMenu = () => {
 	const menu = document.querySelector('menu');
 	const handlerMenu = () => {
+		const width  = window.innerWidth || document.documentElement.clientWidth ||
+		document.body.clientWidth;
+		if (width <= 768) {
+			menu.style.transition = 'none';
+		} else {
+			menu.style.removeProperty('transition');
+		}
 		menu.classList.toggle('active-menu');
 	};
 
